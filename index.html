@@ -1,0 +1,94 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>AI research experiments</title><style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10); --warn: #eda100;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --warn: #c98500;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; } }
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --warn: #c98500;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 16px 16px 56px; }
+main.wide { max-width: 1120px; }
+a { color: inherit; text-underline-offset: 3px; }
+header.top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  color: var(--ink2); font-size: 13px; }
+header.top a { text-decoration: none; font-weight: 600; color: var(--ink); }
+.notice { color: var(--ink2); font-size: 13px; border-left: 3px solid var(--axis);
+  padding: 2px 0 2px 10px; margin: 12px 0 0; }
+.draft { background: color-mix(in oklab, var(--warn) 22%, var(--surface));
+  border: 1px solid var(--warn); border-radius: 8px; padding: 8px 12px; margin: 0 0 14px;
+  font-weight: 600; font-size: 13px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 18px 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 17px; margin: 28px 0 8px; }
+h3 { font-size: 15px; margin: 18px 0 6px; }
+.sub { color: var(--ink2); margin: 0; }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 0; }
+.badge { border: 1px solid var(--axis); border-radius: 12px; padding: 2px 10px;
+  font-size: 12.5px; color: var(--ink2); max-width: 100%; }
+.badge.lead { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.verdict { font-size: 20px; line-height: 1.4; font-weight: 600; margin: 16px 0 0; }
+dl.qh { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 18px 0 0; }
+dl.qh dt { color: var(--muted); font-size: 13px; padding-top: 2px; }
+dl.qh dd { margin: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 14px 10px; margin-top: 16px; }
+.card h2 { margin: 0 0 2px; font-size: 15px; }
+.card .unit { color: var(--muted); font-size: 12.5px; margin: 0 0 8px; }
+.card svg { display: block; width: 100%; height: auto; }
+.card .note { color: var(--ink2); font-size: 13px; margin: 6px 0 4px; }
+details { margin: 6px 0 4px; font-size: 13px; }
+summary { cursor: pointer; color: var(--ink2); }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 6px 8px; text-align: left; vertical-align: top; }
+thead th { color: var(--muted); font-size: 12px; font-weight: 500;
+  border-bottom: 1px solid var(--grid); }
+tbody tr + tr > * { border-top: 1px solid var(--grid); }
+table.runs { min-width: 680px; }
+table.runs th, table.runs td { white-space: nowrap; }
+table.runs td:last-child { white-space: normal; min-width: 220px; }
+.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px; margin-top: 16px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; }
+.kpi .label { color: var(--ink2); font-size: 12.5px; }
+.kpi .value { font-size: 22px; font-weight: 600; margin-top: 2px;
+  font-variant-numeric: tabular-nums; }
+.kpi .foot { color: var(--muted); font-size: 12px; }
+ul.tests { list-style: none; padding: 0; margin: 8px 0 0; }
+ul.tests li { margin: 0 0 8px; }
+ul.tests .badge { margin-right: 6px; }
+blockquote { margin: 12px 0; padding: 2px 0 2px 12px; border-left: 3px solid var(--axis);
+  color: var(--ink2); }
+blockquote footer { font-size: 12.5px; color: var(--muted); }
+.story p, .story li { max-width: 68ch; }
+footer.foot { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--grid);
+  color: var(--muted); font-size: 13px; }
+.index td.title a { font-weight: 600; }
+.index .muted { color: var(--muted); font-size: 12.5px; }
+@media (max-width: 640px) {
+  h1 { font-size: 22px; }
+  dl.qh { grid-template-columns: 1fr; gap: 2px; }
+  dl.qh dd { margin-bottom: 8px; }
+  table.index thead { display: none; }
+  table.index, table.index tbody, table.index tr, table.index td { display: block; width: 100%; }
+  table.index tr { padding: 10px 0; }
+  table.index tbody tr + tr > * { border-top: 0; }
+  table.index tbody tr + tr { border-top: 1px solid var(--grid); }
+  table.index td { padding: 2px 0; text-align: left; white-space: normal; }
+  table.index td[data-label]::before { content: attr(data-label) ": "; color: var(--muted);
+    font-size: 12.5px; }
+}
+</style></head><body><main class=wide><header class="top"><a href="./">AI research experiments</a><span>1 experiment</span></header><p class="notice">Research on a method, not investment advice.</p><h1>AI research experiments</h1><p class="sub">Tests of a research method: what was asked, what was measured, and whether it held. Failures are kept beside successes.</p><div class="scroll" style="margin-top:18px"><table class="index"><thead><tr><th>Date</th><th>Experiment</th><th>Result</th><th>Verdict</th><th>Hypothesis</th><th class="num">Cost</th></tr></thead><tbody><tr><td data-label="Date" class="num">2026-10-18</td><td class="title"><a href="intel-same-facts-24pct-apart/">Same AI, same facts, 24% apart: what two research runs said about Intel&#x27;s earnings</a><div class="muted">Intel (INTC)</div></td><td data-label="Result"><strong>Hypothesis rejected</strong></td><td data-label="Verdict">The AI got Intel&#x27;s facts right both times. The 24% gap came from the odds it put on each scenario, and no fact-check can fix that.</td><td data-label="Hypothesis">A second, fact-checked pass corrects the first answer: some scenario&#x27;s earnings move by more than 5%, or a fact the first answer stated turns out wrong.</td><td data-label="Cost" class="num">$12.15 at list price, not counting First answer (chat), whose cost was not recorded</td></tr></tbody></table></div><footer class="foot">Research on a method, not investment advice.</footer></main></body></html>
