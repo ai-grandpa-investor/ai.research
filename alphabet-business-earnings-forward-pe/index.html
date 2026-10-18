@@ -1,0 +1,232 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Alphabet without the Anthropic windfall: what the business earns, and what the price pays for it · AI research experiments</title><style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --border: rgba(11,11,11,0.10); --warn: #eda100;
+  --s1: #2a78d6; --s2: #eb6834; --s3: #1baf7a;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --warn: #c98500;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; } }
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --border: rgba(255,255,255,0.10); --warn: #c98500;
+    --s1: #3987e5; --s2: #d95926; --s3: #199e70; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink);
+  font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 16px 16px 56px; }
+main.wide { max-width: 1120px; }
+a { color: inherit; text-underline-offset: 3px; }
+header.top { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  color: var(--ink2); font-size: 13px; }
+header.top a { text-decoration: none; font-weight: 600; color: var(--ink); }
+.notice { color: var(--ink2); font-size: 13px; border-left: 3px solid var(--axis);
+  padding: 2px 0 2px 10px; margin: 12px 0 0; }
+.draft { background: color-mix(in oklab, var(--warn) 22%, var(--surface));
+  border: 1px solid var(--warn); border-radius: 8px; padding: 8px 12px; margin: 0 0 14px;
+  font-weight: 600; font-size: 13px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 18px 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 17px; margin: 28px 0 8px; }
+h3 { font-size: 15px; margin: 18px 0 6px; }
+.sub { color: var(--ink2); margin: 0; }
+.badges { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 0; }
+.badge { border: 1px solid var(--axis); border-radius: 12px; padding: 2px 10px;
+  font-size: 12.5px; color: var(--ink2); max-width: 100%; }
+.badge.lead { border-color: var(--ink); color: var(--ink); font-weight: 600; }
+.verdict { font-size: 20px; line-height: 1.4; font-weight: 600; margin: 16px 0 0; }
+dl.qh { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 18px 0 0; }
+dl.qh dt { color: var(--muted); font-size: 13px; padding-top: 2px; }
+dl.qh dd { margin: 0; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 14px 10px; margin-top: 16px; }
+.card h2 { margin: 0 0 2px; font-size: 15px; }
+.card .unit { color: var(--muted); font-size: 12.5px; margin: 0 0 8px; }
+.card svg { display: block; width: 100%; height: auto; }
+.card .note { color: var(--ink2); font-size: 13px; margin: 6px 0 4px; }
+details { margin: 6px 0 4px; font-size: 13px; }
+summary { cursor: pointer; color: var(--ink2); }
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 6px 8px; text-align: left; vertical-align: top; }
+thead th { color: var(--muted); font-size: 12px; font-weight: 500;
+  border-bottom: 1px solid var(--grid); }
+tbody tr + tr > * { border-top: 1px solid var(--grid); }
+table.runs { min-width: 680px; }
+table.runs th, table.runs td { white-space: nowrap; }
+table.runs td:last-child { white-space: normal; min-width: 220px; }
+.num { font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px; margin-top: 16px; }
+.kpi { background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+  padding: 10px 12px; }
+.kpi .label { color: var(--ink2); font-size: 12.5px; }
+.kpi .value { font-size: 22px; font-weight: 600; margin-top: 2px;
+  font-variant-numeric: tabular-nums; }
+.kpi .foot { color: var(--muted); font-size: 12px; }
+ul.tests { list-style: none; padding: 0; margin: 8px 0 0; }
+ul.tests li { margin: 0 0 8px; }
+ul.tests .badge { margin-right: 6px; }
+blockquote { margin: 12px 0; padding: 2px 0 2px 12px; border-left: 3px solid var(--axis);
+  color: var(--ink2); }
+blockquote footer { font-size: 12.5px; color: var(--muted); }
+.story p, .story li { max-width: 68ch; }
+footer.foot { margin-top: 36px; padding-top: 12px; border-top: 1px solid var(--grid);
+  color: var(--muted); font-size: 13px; }
+.index td.title a { font-weight: 600; }
+.index .muted { color: var(--muted); font-size: 12.5px; }
+@media (max-width: 640px) {
+  h1 { font-size: 22px; }
+  dl.qh { grid-template-columns: 1fr; gap: 2px; }
+  dl.qh dd { margin-bottom: 8px; }
+  table.index thead { display: none; }
+  table.index, table.index tbody, table.index tr, table.index td { display: block; width: 100%; }
+  table.index tr { padding: 10px 0; }
+  table.index tbody tr + tr > * { border-top: 0; }
+  table.index tbody tr + tr { border-top: 1px solid var(--grid); }
+  table.index td { padding: 2px 0; text-align: left; white-space: normal; }
+  table.index td[data-label]::before { content: attr(data-label) ": "; color: var(--muted);
+    font-size: 12.5px; }
+}
+</style></head><body><main><header class="top"><a href="../">AI research experiments</a><span>18 October 2026</span></header><p class="notice">Research on a method, not investment advice.</p><h1>Alphabet without the Anthropic windfall: what the business earns, and what the price pays for it</h1><p class="sub">Alphabet (GOOG)</p><div class="badges"><span class="badge lead">Inconclusive</span></div><div class="story"><h2>The short version</h2>
+<p>Most of the profit Alphabet reported in the first half of 2026 did not come from
+Google. Of $14.24 a share, $8.96 came from marking up the value of stakes it holds in
+other companies. $7.48 of that came from private stakes, which Alphabet's quarterly
+report says are mostly one private company. The report does not name it; public reports
+say it is the AI company Anthropic. Listed shares, SpaceX among them, added $1.42.</p>
+<p>Take those gains out and the business earned $5.28 a share, up 21% on a year earlier.
+Analysts expect about $11.65 for the whole of 2026 on that basis, and $15.14 in 2027.
+At the close of 5 October 2026, $343.83, the shares cost 29.5 times the business's 2026
+earnings and 22.7 times 2027's.</p>
+<p>The business is growing fast. Revenue rose 24.2% in the second quarter of 2026, against
+11% to 15% a year in the two years to mid-2025, and analysts expect it to stay above
+that old range until early 2028.</p>
+<h2>Why it matters</h2>
+<p>A gain on a stake is real wealth, but it is not a profit the business makes again next
+year. It comes when a private company raises money at a higher price, or a listed one's
+shares rise, and it can reverse. A P/E on reported earnings mixes the two: on 2026 it
+looks like 16.7 times, which is the business plus a windfall. On the business alone it
+is 29.5 times.</p>
+<h2>The two parts, year by year</h2>
+<table>
+<thead>
+<tr>
+<th>Earnings a share</th>
+<th>Business</th>
+<th>Stakes</th>
+<th>Reported</th>
+<th>P/E on the business at $343.83</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2023</td>
+<td>$5.77</td>
+<td>$0.03</td>
+<td>$5.80</td>
+<td>59.5</td>
+</tr>
+<tr>
+<td>2024</td>
+<td>$7.79</td>
+<td>$0.25</td>
+<td>$8.04</td>
+<td>44.1</td>
+</tr>
+<tr>
+<td>2025</td>
+<td>$9.17</td>
+<td>$1.64</td>
+<td>$10.81</td>
+<td>37.5</td>
+</tr>
+<tr>
+<td>2026, first half</td>
+<td>$5.28</td>
+<td>$8.96</td>
+<td>$14.24</td>
+<td></td>
+</tr>
+<tr>
+<td>2026, forecast</td>
+<td>$11.65</td>
+<td>$8.96</td>
+<td>$20.61</td>
+<td>29.5</td>
+</tr>
+<tr>
+<td>2027, forecast</td>
+<td>$15.14</td>
+<td>none forecast</td>
+<td>$15.14</td>
+<td>22.7</td>
+</tr>
+<tr>
+<td>2028, forecast</td>
+<td>$17.99</td>
+<td>none forecast</td>
+<td>$17.99</td>
+<td>19.1</td>
+</tr>
+</tbody>
+</table>
+<p>The business is pre-tax income less the gains on equity securities, both from the
+filings. The filing gives tax only on the whole, so both parts are taxed at the
+period's effective rate (19.1% in the first half of 2026); that is an approximation.
+For 2026 we take the analysts' $20.61 and subtract the gains booked to June. Their
+quarterly forecasts agree: the reported first half plus their $3.04 and $3.37 for the
+third and fourth quarters add back to the year, so they forecast no further gains.</p>
+<h2>Growth, quarter by quarter</h2>
+<table>
+<thead>
+<tr>
+<th>Quarter</th>
+<th>Revenue growth on a year earlier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q3 2025, reported</td>
+<td>15.9%</td>
+</tr>
+<tr>
+<td>Q4 2025, reported</td>
+<td>18.0%</td>
+</tr>
+<tr>
+<td>Q1 2026, reported</td>
+<td>21.8%</td>
+</tr>
+<tr>
+<td>Q2 2026, reported</td>
+<td>24.2%</td>
+</tr>
+<tr>
+<td>Q3 2026 to Q2 2027, forecast</td>
+<td>24.3%, 24.2%, 24.7%, 23.0%</td>
+</tr>
+<tr>
+<td>Q3 2027 to Q2 2028, forecast</td>
+<td>23.4%, 20.7%, 20.2%, 17.6%</td>
+</tr>
+</tbody>
+</table>
+<p>A fixed rule, the same for every company we look at, says the faster pace began in the
+third quarter of 2025: four quarters in a row are outside the range of the eight before.
+Measured against the last eight reported quarters, that range is 13.2% to 17.8%, and
+the forecasts come back inside it only in the second quarter of 2028.</p>
+<h2>What the filings do not say</h2>
+<p>How much of Google Cloud's revenue comes from Anthropic or other AI companies Alphabet
+has invested in. Alphabet does not report revenue by customer, so that part cannot be
+split out. The filing gives only the whole: Google Cloud's revenue rose to $24.8 billion
+in the second quarter of 2026 from $13.6 billion a year earlier, it began selling TPU
+systems that quarter, and its revenue backlog, contracts not yet recognised as revenue,
+stood at $513.9 billion at the end of June.</p>
+<p>Nor can one company prove the growth rule right; that will be known only as the
+quarters are reported. The forecasts thin out beyond 2027, to ten analysts for the 2028
+quarters. And a P/E says what the price pays for one year's forecast, not whether the
+forecast is right.</p>
+</div><section class="card"><h2>Alphabet&#x27;s earnings per share, the business and the stakes</h2><p class="unit">USD a share, diluted, GAAP</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 482" role="img" aria-label="Alphabet&#x27;s earnings per share, the business and the stakes" font-family="system-ui, -apple-system, Segoe UI, Helvetica, Arial, sans-serif"><line x1="4.0" x2="4.0" y1="42" y2="476" stroke="var(--axis)" stroke-width="1"/><rect x="4" y="5" width="10" height="10" rx="2" fill="var(--s1)"/><text x="18" y="14" font-size="12" fill="var(--ink2)">From the business</text><rect x="146.2" y="5" width="10" height="10" rx="2" fill="var(--s2)"/><text x="160.2" y="14" font-size="12" fill="var(--ink2)">From revaluing stakes</text><text x="4" y="39" font-size="13" font-weight="500" fill="var(--ink)">2023, reported</text><g><title>2023, reported, From the business: 5.77 USD a share, diluted, GAAP</title><path d="M4.0,44.0h93.2a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-93.2z" fill="var(--s1)"/><text x="104.2" y="55" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">5.77</text></g><g><title>2023, reported, From revaluing stakes: 0.03 USD a share, diluted, GAAP</title><path d="M4.0,62.0h0.0a0.500277932184547,0.500277932184547 0 0 1 0.500277932184547,0.500277932184547v13.0a0.500277932184547,0.500277932184547 0 0 1 -0.500277932184547,0.500277932184547h-0.0z" fill="var(--s2)"/><text x="8.5" y="73" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">0.03</text></g><text x="4" y="105" font-size="13" font-weight="500" fill="var(--ink)">2024, reported</text><g><title>2024, reported, From the business: 7.79 USD a share, diluted, GAAP</title><path d="M4.0,110.0h126.9a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-126.9z" fill="var(--s1)"/><text x="137.9" y="121" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">7.79</text></g><g><title>2024, reported, From revaluing stakes: 0.25 USD a share, diluted, GAAP</title><path d="M4.0,128.0h1.2a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-1.2z" fill="var(--s2)"/><text x="12.2" y="139" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">0.25</text></g><text x="4" y="171" font-size="13" font-weight="500" fill="var(--ink)">2025, reported</text><g><title>2025, reported, From the business: 9.17 USD a share, diluted, GAAP</title><path d="M4.0,176.0h149.9a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-149.9z" fill="var(--s1)"/><text x="160.9" y="187" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">9.17</text></g><g><title>2025, reported, From revaluing stakes: 1.64 USD a share, diluted, GAAP</title><path d="M4.0,194.0h24.3a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-24.3z" fill="var(--s2)"/><text x="35.3" y="205" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">1.64</text></g><text x="4" y="237" font-size="13" font-weight="500" fill="var(--ink)">2026, first half</text><g><title>2026, first half, From the business: 5.28 USD a share, diluted, GAAP</title><path d="M4.0,242.0h85.0a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-85.0z" fill="var(--s1)"/><text x="96.0" y="253" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">5.28</text></g><g><title>2026, first half, From revaluing stakes: 8.96 USD a share, diluted, GAAP</title><path d="M4.0,260.0h146.4a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-146.4z" fill="var(--s2)"/><text x="157.4" y="271" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">8.96</text></g><text x="4" y="303" font-size="13" font-weight="500" fill="var(--ink)">2026, forecast</text><g><title>2026, forecast, From the business: 11.65 USD a share, diluted, GAAP</title><path d="M4.0,308.0h191.3a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-191.3z" fill="var(--s1)"/><text x="202.3" y="319" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">11.65</text></g><g><title>2026, forecast, From revaluing stakes: 8.96 USD a share, diluted, GAAP</title><path d="M4.0,326.0h146.4a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-146.4z" fill="var(--s2)"/><text x="157.4" y="337" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">8.96</text></g><text x="4" y="369" font-size="13" font-weight="500" fill="var(--ink)">2027, forecast</text><g><title>2027, forecast, From the business: 15.14 USD a share, diluted, GAAP</title><path d="M4.0,374.0h249.5a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-249.5z" fill="var(--s1)"/><text x="260.5" y="385" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">15.14</text></g><g><title>2027, forecast, From revaluing stakes: none</title><text x="8.0" y="403" font-size="12" fill="var(--muted)">none</text></g><text x="4" y="435" font-size="13" font-weight="500" fill="var(--ink)">2028, forecast</text><g><title>2028, forecast, From the business: 17.99 USD a share, diluted, GAAP</title><path d="M4.0,440.0h297.0a3,3 0 0 1 3,3v8.0a3,3 0 0 1 -3,3h-297.0z" fill="var(--s1)"/><text x="308.0" y="451" font-size="12" text-anchor="start" fill="var(--ink)" style="font-variant-numeric:tabular-nums">17.99</text></g><g><title>2028, forecast, From revaluing stakes: none</title><text x="8.0" y="469" font-size="12" fill="var(--muted)">none</text></g></svg><p class="note">2026&#x27;s forecast for the business is the analysts&#x27; $20.61 less the $8.96 of gains booked to June; their forecasts for the second half and for 2027 and 2028 carry no gains. Both parts are taxed at each period&#x27;s effective rate.</p><details><summary>The numbers as a table</summary><div class=scroll><table><thead><tr><th></th><th class="num">From the business</th><th class="num">From revaluing stakes</th></tr></thead><tbody><tr><th scope=row>2023, reported</th><td class="num">5.77</td><td class="num">0.03</td></tr><tr><th scope=row>2024, reported</th><td class="num">7.79</td><td class="num">0.25</td></tr><tr><th scope=row>2025, reported</th><td class="num">9.17</td><td class="num">1.64</td></tr><tr><th scope=row>2026, first half</th><td class="num">5.28</td><td class="num">8.96</td></tr><tr><th scope=row>2026, forecast</th><td class="num">11.65</td><td class="num">8.96</td></tr><tr><th scope=row>2027, forecast</th><td class="num">15.14</td><td class="num">none</td></tr><tr><th scope=row>2028, forecast</th><td class="num">17.99</td><td class="num">none</td></tr></tbody></table></div></details></section><div class="kpis"><div class="kpi"><div class="label">Earnings from the business, first half of 2026</div><div class="value">$5.28</div><div class="foot">A share, up 21% on $4.38 a year earlier</div></div><div class="kpi"><div class="label">Earnings from revaluing stakes, first half of 2026</div><div class="value">$8.96</div><div class="foot">A share: 63% of the $14.24 reported. $7.48 of it from private stakes, mostly one private company; $1.42 from listed shares, SpaceX among them</div></div><div class="kpi"><div class="label">P/E on the business&#x27;s 2026 earnings</div><div class="value">29.5x</div><div class="foot">Close of $343.83 on 5 Oct 2026 over an estimated $11.65 a share: the 2026 forecast of $20.61 (GAAP, 11 analysts) less the $8.96 of gains booked to June. 28.9x at the 16 Oct close of $336.91</div></div><div class="kpi"><div class="label">P/E on 2027 forecast earnings</div><div class="value">22.7x</div><div class="foot">Over $15.14 a share (GAAP, 22 analysts, $13.97 to $16.28), which forecasts no gains. 22.3x at the 16 Oct close</div></div><div class="kpi"><div class="label">P/E on 2028 forecast earnings</div><div class="value">19.1x</div><div class="foot">Over $17.99 a share (GAAP, 11 analysts). 18.7x at the 16 Oct close</div></div><div class="kpi"><div class="label">P/E on the business&#x27;s 2025 earnings</div><div class="value">37.5x</div><div class="foot">Over $9.17 a share; 31.8x on the $10.81 reported, gains included</div></div><div class="kpi"><div class="label">Revenue growth, Q2 2026, reported</div><div class="value">24.2%</div><div class="foot">Up from 11% to 15% in the eight quarters to mid-2025</div></div><div class="kpi"><div class="label">Forecast growth, next four quarters</div><div class="value">24.1%</div><div class="foot">Average of Q3 2026 to Q2 2027; 15 to 25 analysts a quarter</div></div></div><h2>How it was run</h2><p>Code only, no AI. We took Alphabet&#x27;s revenue for every quarter since 2015 from its SEC filings and joined it to analysts&#x27; forecasts saved on 5 October 2026. One rule decides when growth leaves its usual range: a quarter is unusual when its growth on a year earlier is further from the median of the eight quarters before it than 1.5 points or 15% of that median, whichever is larger, and two unusual quarters in a row on the same side start a new pace. For forecasts the range is fixed at the last eight reported quarters, and a quarter with fewer than five analysts is not judged. The forward P/E is the closing price divided by the analysts&#x27; average earnings per share for each year, on the same accounting basis as the annual report (GAAP). The business&#x27;s earnings are pre-tax income less the gains on equity securities, as filed; both parts are taxed at the period&#x27;s effective rate, because the filing gives no tax on the gains alone.</p><dl class="qh"><dt>Question</dt><dd>How much of Alphabet&#x27;s profit comes from its business, and how much from revaluing its stakes in other companies? How long do analysts expect its faster growth to last, and what does the share price pay for the business&#x27;s earnings?</dd><dt>Hypothesis</dt><dd>The filings are enough to split Alphabet&#x27;s earnings into the business and the stakes, and one fixed rule, the same for every company, can read from the filings and the analysts&#x27; forecasts when a growth spurt began and when analysts expect it to end.</dd></dl><p>What changed from the earlier run:</p><ul><li>Forward P/E added to the growth page of 9 October 2026, with the date of the close, the date of the forecasts, the earnings basis and the fiscal year shown.</li><li>Earnings split into the business and the gains on stakes in other companies, from the annual reports for 2023 to 2025 and the quarterly report for mid-2026.</li></ul><div class=scroll><table class="runs"><thead><tr><th>Run</th><th>How</th><th>Model</th><th>Thinking effort</th><th class="num">Steps</th><th class="num">Minutes</th><th class="num">Cost</th><th>Note</th></tr></thead><tbody><tr><th scope=row>Growth rule</th><td>code</td><td>None (no AI)</td><td>—</td><td class="num">—</td><td class="num">—</td><td class="num">$0.00</td><td>Reported quarters from SEC filings; analyst forecasts saved on 5 October 2026; estimate revisions from a second data service, saved on 9 October 2026.</td></tr><tr><th scope=row>Earnings split and P/E</th><td>code</td><td>None (no AI)</td><td>—</td><td class="num">—</td><td class="num">—</td><td class="num">$0.00</td><td>Closes of 5 and 16 October 2026 from a market-data service, taken only when two of its answers for the day agree.</td></tr></tbody></table></div><p>Total: $0.00 at list price: what the AI usage costs at the provider's list prices.</p><h2>Sources</h2><ul><li><a href="https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm">Alphabet, second-quarter 2026 results (press release filed with the SEC)</a></li><li><a href="https://fortune.com/2026/07/22/anthropic-spacex-investments-google-earnings-biggest-ever-profit-quarter/">Fortune, on the Anthropic and SpaceX gains in Alphabet&#x27;s second quarter</a></li><li><a href="https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/">Alphabet, quarterly report for Q2 2026 (10-Q, filed 23 July 2026)</a></li><li><a href="https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/">Alphabet, annual report for 2025 (10-K, filed 5 February 2026)</a></li><li><a href="https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json">Alphabet&#x27;s reported figures as filed with the SEC (company facts)</a></li></ul><footer class="foot">Research on a method, not investment advice.</footer></main></body></html>
